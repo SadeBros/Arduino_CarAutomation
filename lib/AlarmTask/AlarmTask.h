@@ -52,7 +52,7 @@ public:
     uint16_t dayWeek()       const   {  return ( alarm & MASK_DAY_OF_WEEK)/ DIGIT_VALUE_DAY_OF_WEEK ; }
     uint16_t hour()          const   {  return ( alarm & MASK_HOUR      ) / DIGIT_VALUE_HOUR ; }
     uint16_t minute()        const   {  return ( alarm & MASK_MINUTE    ) / DIGIT_VALUE_MINUTE ; }
-    
+    uint16_t dayTime()       const   {  return alarm & MASK_DAY_TIME;}
     
     void setAlarm(uint32_t alarm){
         this->alarm = alarm;
@@ -62,7 +62,6 @@ public:
         alarm &= onesComplement( MASK_ALARM_ID );       //  Previous id is cleared.
         alarm += id * DIGIT_VALUE_ID;                   //  The new one is set.
     }
-    
     
     
     
@@ -142,10 +141,6 @@ public:
         return ( lhsDayTime == rhsDayTime );
     }
     
-    uint16_t dayTime() const{
-        return alarm & MASK_DAY_TIME;
-    }
-    
     String descriptionAsString(){
         return ("id: " +        String( id()                ) + " " +
                 "relay4: " +    String( relay4()            ) + " " +
@@ -157,8 +152,6 @@ public:
                 "hour: " +      String( hour()              ) + " " +
                 "minute: " +    String( minute()            ));
     }
-    
-    
 };
 
 #endif

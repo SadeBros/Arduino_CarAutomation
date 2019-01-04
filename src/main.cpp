@@ -113,7 +113,7 @@ void UpdateCurrentAlarmIterator(){
         currentAlarmIterator = alarmList.begin();
     
     else{
-        int now = RTCDayTime();
+        uint32_t now = RTCDayTime();
         
         SinglyLinkedList<AlarmTask>::iterator it;
         it = alarmList.begin();
@@ -151,14 +151,21 @@ void serialEvent()                                        //  Called when data i
     else if ( receivedBluetoothData.startsWith("rs"))
       RelaysStatus();
 
-    else if ( receivedBluetoothData.startsWith("aa"))
-      AlarmAdd( receivedBluetoothData.substring(3, receivedBluetoothData.indexOf(" ;")).toInt() );      //  AlarmSet( AlarmDescription );
+    else if ( receivedBluetoothData.startsWith("aa")){
+      AlarmAdd( receivedBluetoothData.substring(3, receivedBluetoothData.indexOf(" ;")).toInt() );      //  AlarmAdd( alarmDescription );
+      UpdateCurrentAlarmIterator();
+      UpdateAlarm2RegisterOfRTC();
+    }
+      
+    else if ( receivedBluetoothData.startsWith("ar")){
+      AlarmRemove( receivedBluetoothData.substring(3, receivedBluetoothData.indexOf(" ;")).toInt() );   //  AlarmRemove( alarmId );
+      UpdateCurrentAlarmIterator();
+      UpdateAlarm2RegisterOfRTC();
+    }
 
-    else if ( receivedBluetoothData.startsWith("ar"))
-      AlarmRemove( receivedBluetoothData.substring(3, receivedBluetoothData.indexOf(" ;")).toInt() );   //  AlarmDisarm( alarmId );
-
-    else if ( receivedBluetoothData.startsWith("as"))
+    /*else if ( receivedBluetoothData.startsWith("as"))
       AlarmSet( receivedBluetoothData.substring(3, receivedBluetoothData.indexOf(" ;")).toInt() );      //  AlarmSet( alarmId );
+    */
 
     else if ( receivedBluetoothData.startsWith("al"))
       AlarmList();
@@ -361,6 +368,8 @@ String DayDate( uint16_t t ){
     case 6:   return "Saturday";
     case 7:   return "Sunday";
   }
+
+  return "";
 }
 
 int RTCDayTime(){
@@ -382,6 +391,7 @@ void AlarmAdd( uint32_t alarmDescription ){
   alarmList.push_sorted( newAlarm );
 }
 
+/*
 void AlarmSet( uint8_t alarmId){
   AlarmTask tempAlarm( 0 );
   tempAlarm.setId( alarmId );
@@ -390,6 +400,7 @@ void AlarmSet( uint8_t alarmId){
   AlarmTask& firstAlarm = currentAlarmIterator.current().info();
   SetAlarm2Register( firstAlarm.minute(),  firstAlarm.hour(), castDayToTimelibFormat(firstAlarm.dayWeek()) );
 }
+*/
 
 void AlarmRemove( uint8_t alarmId ){
   AlarmTask tempAlarm( 0 );
